@@ -8,7 +8,7 @@
 
 ## 1. Architectural Upgrades
 
-### A. The Network Layer (Titan Firewall)
+### A. The Network Layer (Network Fortress)
 We are moving from Process Security (`execve`) to Socket Security (`connect`).
 * **Mechanism:** `cgroup` eBPF hooks. This allows us to filter traffic for the specific container without affecting the host node excessively.
 * **Data Structure:** `BPF_MAP_TYPE_HASH` shared between Kernel and User Space.

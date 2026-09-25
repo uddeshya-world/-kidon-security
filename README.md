@@ -1,12 +1,11 @@
 # ⚔️ KIDON (כידון)
-> **Agentic Cyber Defense Platform** // Unit 8200-inspired Architecture
+> **Agentic Cyber Defense Platform**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Release: v0.3.0](https://img.shields.io/badge/Release-v0.3.0-00f3ff)](https://github.com/uddeshya-23/-kidon-security/releases)
+[![Release: v0.3.0](https://img.shields.io/badge/Release-v0.3.0-00f3ff)](https://github.com/uddeshya-world/-kidon-security/releases)
 [![Tech: Cilium eBPF](https://img.shields.io/badge/Powered%20By-Cilium%20eBPF-F6C702)](https://ebpf.io)
-[![OWASP: Top 10](https://img.shields.io/badge/OWASP%20Agentic-Covered-ff003c)](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
-**Kidon** is the first open-source security platform designed to bind "Titans"—Autonomous AI Agents. It provides a unified **Command Cockpit (TUI)** combining Static Analysis, Runtime eBPF Guarding, and Red Teaming.
+**Kidon** is a security platform for autonomous AI agents (Titans). It provides a unified **Command Cockpit (TUI)** combining Static Analysis, Runtime eBPF Guarding, and Red Teaming.
 
 ![Kidon Command Cockpit - The Sentry](assets/dashboard_sentry.png)
 
@@ -22,25 +21,25 @@ No installation required. Runs the full platform in a container.
 # Run the Command Cockpit (TUI)
 docker run -it --privileged --pid=host \
   -v $(pwd):/target \
-  ghcr.io/uddeshya-23/kidon:latest dashboard
+  ghcr.io/uddeshya-world/kidon:latest dashboard
 
 # Scan current directory for vulnerabilities
 docker run --rm -v $(pwd):/target \
-  ghcr.io/uddeshya-23/kidon:latest scan /target
+  ghcr.io/uddeshya-world/kidon:latest scan /target
 ```
 
 ### Option 2: Binary Install (Linux/Mac)
 Download the latest release and run locally.
 
 ```bash
-curl -sfL https://raw.githubusercontent.com/uddeshya-23/-kidon-security/main/install.sh | sh
+curl -sfL https://raw.githubusercontent.com/uddeshya-world/-kidon-security/main/install.sh | sh
 ./kidon dashboard
 ```
 
 ### Option 3: Build from Source
 
 ```bash
-git clone https://github.com/uddeshya-23/-kidon-security
+git clone https://github.com/uddeshya-world/-kidon-security
 cd -kidon-security
 go build -o kidon cmd/kidon/main.go
 ./kidon dashboard

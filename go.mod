@@ -1,4 +1,4 @@
-module github.com/uddeshya-23/kidon-security
+module github.com/uddeshya-world/kidon-security
 
 go 1.24.0
 

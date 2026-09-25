@@ -1,7 +1,7 @@
 # ⚔️ Kidon v0.3.0: The "Command" Update
-> **Agentic Cyber Defense Platform** // Unit 8200-inspired Architecture
+> **Agentic Cyber Defense Platform**
 
-Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Intelligence** module (codenamed **"The Gatekeeper"**), completing the "Titan Framework" MVP.
+Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Intelligence** module (codenamed **"The Gatekeeper"**).
 
 ### 🚀 New Features
 
@@ -31,7 +31,7 @@ Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Int
 
 ### 📦 Installation
 ```bash
-git clone https://github.com/uddeshya-23/-kidon-security
+git clone https://github.com/uddeshya-world/-kidon-security
 cd -kidon-security
 go build -o kidon cmd/kidon/main.go
 ```

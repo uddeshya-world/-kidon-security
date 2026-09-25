@@ -10,11 +10,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"github.com/uddeshya-23/kidon-security/internal/offensive"
-	"github.com/uddeshya-23/kidon-security/internal/report"
-	kruntime "github.com/uddeshya-23/kidon-security/internal/runtime"
-	"github.com/uddeshya-23/kidon-security/internal/static"
-	"github.com/uddeshya-23/kidon-security/internal/ui"
+	"github.com/uddeshya-world/kidon-security/internal/offensive"
+	"github.com/uddeshya-world/kidon-security/internal/report"
+	kruntime "github.com/uddeshya-world/kidon-security/internal/runtime"
+	"github.com/uddeshya-world/kidon-security/internal/static"
+	"github.com/uddeshya-world/kidon-security/internal/ui"
 )
 
 var (
@@ -36,9 +36,7 @@ var rootCmd = &cobra.Command{
 	Short: "Kidon - Agentic Cyber Defense Platform",
 	Long: banner + `
 Kidon is a security platform designed for AI agents.
-It provides static analysis, runtime protection, and red teaming capabilities.
-
-OWASP Top 10 for Agentic AI (2025) Compliant.`,
+It provides static analysis, runtime protection, and red teaming capabilities.`,
 	Version: version,
 }
 
@@ -156,7 +154,7 @@ NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
 			fmt.Println("  docker run --privileged --pid=host --cgroupns=host kidon-security guard --network")
 			os.Exit(1)
 		}
-		
+
 		if guardNetwork {
 			color.Cyan("🔥 Starting Iron Dome (Full Protection)...")
 			kruntime.StartFullGuard(guardCgroup)

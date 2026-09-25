@@ -1,10 +1,10 @@
 #!/bin/sh
 # Kidon Installer Script
-# Usage: curl -sfL https://raw.githubusercontent.com/uddeshya-23/-kidon-security/main/install.sh | sh
+# Usage: curl -sfL https://raw.githubusercontent.com/uddeshya-world/-kidon-security/main/install.sh | sh
 
 set -e
 
-REPO="uddeshya-23/-kidon-security"
+REPO="uddeshya-world/-kidon-security"
 BINARY="kidon"
 INSTALL_DIR="/usr/local/bin"
 
