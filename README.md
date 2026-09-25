@@ -13,8 +13,9 @@
 
 ## 🚀 Quick Start 
 
-### Option 1: Docker (Recommended)
-No installation required. Runs the full platform in a container.
+### Option 1: Docker image (not yet available)
+
+No image is published. An anonymous pull of `ghcr.io/uddeshya-world/kidon:latest` returns 403.
 
 ```bash
 # Run the Command Cockpit (TUI)
@@ -27,8 +28,9 @@ docker run --rm -v $(pwd):/target \
   ghcr.io/uddeshya-world/kidon:latest scan /target
 ```
 
-### Option 2: Binary Install (Linux/Mac)
-Download the latest release and run locally.
+### Option 2: Prebuilt binary (not yet available)
+
+This repository has no releases, so there is no prebuilt binary to download.
 
 ```bash
 curl -sfL https://raw.githubusercontent.com/uddeshya-world/-kidon-security/main/install.sh | sh

@@ -120,7 +120,7 @@ func (ng *NetworkGuard) Start(cgroupPath string) error {
 	ng.StartDNSTicker()
 
 	log.Println("🔥 KIDON NETWORK GUARD v0.2.1 (Iron Dome)")
-	log.Printf("🛡️ Network Firewall: Allowed %d domains, %d IPs",
+	log.Printf("🛡️ Network policy (logging only): Allowed %d domains, %d IPs",
 		len(ng.policy.AllowedDomains), len(ng.policy.AllowedIPs))
 	log.Printf("📍 Cgroup path: %s", cgroupPath)
 	log.Println("⚠️  Note: Full eBPF cgroup filtering requires kernel BTF support")

@@ -48,7 +48,6 @@ var scanCmd = &cobra.Command{
 	
 Scans for:
   - Hardcoded credentials (API keys, AWS keys)
-  - Dangerous tool configurations
   - Vulnerable dependencies (OSV.dev)`,
 	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -134,14 +133,12 @@ var guardCmd = &cobra.Command{
 	Short: "Activate runtime eBPF protection",
 	Long: `The Watchman - Kernel-level eBPF monitoring of agent processes.
 
-v0.1.0: Process Guard - Blocks unauthorized process execution (bash, sh).
-v0.2.0: Network Guard - Blocks unauthorized network connections (Iron Dome).
-
-Target Risks: ASI-02 (Tool Misuse), ASI-05 (Code Exec), ASI-10 (Rogue Agents).
+v0.1.0: Process Guard - Blocks unauthorized process execution (bash).
+v0.2.0: Network Guard (experimental) - resolves allowed domains and logs; connection blocking is not implemented yet.
 
 Examples:
   kidon guard                       # Process guard only
-  kidon guard --network             # Full protection (process + network)
+  kidon guard --network             # Process guard plus experimental network logging
   kidon guard --network --cgroup /sys/fs/cgroup
 
 NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
@@ -156,7 +153,7 @@ NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
 		}
 
 		if guardNetwork {
-			color.Cyan("🔥 Starting Iron Dome (Full Protection)...")
+			color.Cyan("Starting process guard + experimental network logging...")
 			kruntime.StartFullGuard(guardCgroup)
 		} else {
 			kruntime.StartGuard()
@@ -165,7 +162,7 @@ NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
 }
 
 func init() {
-	guardCmd.Flags().BoolVar(&guardNetwork, "network", false, "Enable Network Guard (Iron Dome v0.2.0)")
+	guardCmd.Flags().BoolVar(&guardNetwork, "network", false, "Enable experimental network logging (no blocking)")
 	guardCmd.Flags().StringVar(&guardCgroup, "cgroup", "/sys/fs/cgroup", "Cgroup path for network filtering")
 }
 
@@ -185,8 +182,6 @@ var strikeCmd = &cobra.Command{
 
 Executes jailbreak attempts and security tests against a target AI agent.
 Can use static attack strategies or AI-generated attacks via Ollama.
-
-Target Risks: ASI-01 (Goal Hijack), ASI-06 (Memory Poisoning), ASI-08 (Cascading Failures).
 
 Examples:
   kidon strike -t http://localhost:8000/chat
