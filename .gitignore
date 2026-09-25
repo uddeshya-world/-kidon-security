@@ -2,6 +2,9 @@
 *.exe
 /kidon
 
+# Editor backups
+*~
+
 # Test artifacts
 mission.json
 mission_report.html

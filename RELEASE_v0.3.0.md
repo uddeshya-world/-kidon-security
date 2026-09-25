@@ -1,18 +1,18 @@
 # ⚔️ Kidon v0.3.0: The "Command" Update
-> **Agentic Cyber Defense Platform** // Unit 8200-inspired Architecture
+> **Agentic Cyber Defense Platform**
 
-Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Intelligence** module (codenamed **"The Gatekeeper"**), completing the "Titan Framework" MVP.
+Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Intelligence** module (codenamed **"The Gatekeeper"**).
 
 ### 🚀 New Features
 
 **1. The Command Cockpit (TUI)**
 * **Unified Dashboard:** A cyberpunk, keyboard-driven interface (`./kidon dashboard`) powered by `Bubble Tea`.
-* **Live Monitoring:** Watch real-time logs from the Shomer (Guard) and Sentry (Scanner) in one terminal.
+* The dashboard's Shomer tab shows simulated demo events; `kidon guard` runs the eBPF guard. The Sentry tab shows fixed demonstration output and does not scan or contact a target. `kidon scan` performs the real scan.
 * **Interactive Tabs:** Switch between Sentry, Shomer, and Kidon Strike modes instantly.
 
 **2. Supply Chain Intelligence ("The Gatekeeper")**
-* **OWASP ASI-04 Coverage:** The Gatekeeper module now deeply parses `requirements.txt` and `go.mod` files.
-* **OSV.dev Integration:** Automatically cross-references your agent's dependencies against the Open Source Vulnerabilities (OSV) database to intercept poisoned or vulnerable packages before installation.
+* The Gatekeeper module parses dependency manifests (`requirements.txt`, `go.mod`, and `package.json`) and flags packages that OSV.dev reports as vulnerable.
+* **OSV.dev Integration:** Automatically cross-references your agent's dependencies against the Open Source Vulnerabilities (OSV) database to flag poisoned or vulnerable packages in dependency manifests.
 
 **3. Network Fortress (Experimental)**
 * **Passive DNS Mode:** Resolves agent domains to IPs for audit logging (Blocking is currently disabled for compatibility).
@@ -31,7 +31,7 @@ Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Int
 
 ### 📦 Installation
 ```bash
-git clone https://github.com/uddeshya-23/-kidon-security
+git clone https://github.com/uddeshya-world/-kidon-security
 cd -kidon-security
 go build -o kidon cmd/kidon/main.go
 ```

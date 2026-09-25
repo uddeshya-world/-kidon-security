@@ -2,7 +2,8 @@ package report
 
 import "time"
 
-// MissionData holds the state of the current assessment
+// MissionData holds the state of the current assessment.
+// TitanClass is the class of the agent (Titan) under assessment.
 type MissionData struct {
 	Timestamp     time.Time      `json:"timestamp"`
 	TitanClass    string         `json:"titan_class"`

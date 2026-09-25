@@ -1,10 +1,10 @@
 #!/bin/sh
 # Kidon Installer Script
-# Usage: curl -sfL https://raw.githubusercontent.com/uddeshya-23/-kidon-security/main/install.sh | sh
+# Usage: curl -sfL https://raw.githubusercontent.com/uddeshya-world/-kidon-security/main/install.sh | sh
 
 set -e
 
-REPO="uddeshya-23/-kidon-security"
+REPO="uddeshya-world/-kidon-security"
 BINARY="kidon"
 INSTALL_DIR="/usr/local/bin"
 
@@ -23,23 +23,37 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "OS: $OS | Arch: $ARCH"
 echo ""
 
-# Download latest release
-LATEST=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+# A missing GitHub release is an HTTP error. Do not substitute a tag.
+LATEST=""
+if API=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest"); then
+    LATEST=$(printf '%s\n' "$API" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+fi
 if [ -z "$LATEST" ]; then
-    LATEST="v0.3.0"
+    echo "No release binaries are published yet. Build from source: go build -o kidon ./cmd/kidon"
+    exit 1
 fi
 
 echo "📦 Downloading Kidon $LATEST..."
 DOWNLOAD_URL="https://github.com/$REPO/releases/download/$LATEST/kidon-${OS}-${ARCH}"
 
+downloaded=0
 if command -v curl > /dev/null; then
-    curl -sL "$DOWNLOAD_URL" -o "$BINARY" || {
-        echo "Note: Pre-built binary not found. Building from source..."
-        echo "Run: go build -o kidon cmd/kidon/main.go"
-        exit 1
-    }
+    if curl -fsSL "$DOWNLOAD_URL" -o "$BINARY"; then
+        downloaded=1
+    fi
 elif command -v wget > /dev/null; then
-    wget -q "$DOWNLOAD_URL" -O "$BINARY" || exit 1
+    if wget -O "$BINARY" "$DOWNLOAD_URL"; then
+        downloaded=1
+    fi
+else
+    echo "curl or wget is required."
+    exit 1
+fi
+
+if [ "$downloaded" -ne 1 ] || ! [ -s "$BINARY" ]; then
+    rm -f "$BINARY"
+    echo "Download failed: $DOWNLOAD_URL"
+    exit 1
 fi
 
 chmod +x "$BINARY"

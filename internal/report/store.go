@@ -41,6 +41,7 @@ func load() MissionData {
 	file, err := os.ReadFile(missionFile)
 	if err != nil {
 		return MissionData{
+			// Default names the assessed agent (see configs/kidon_policy.yaml class_2).
 			TitanClass: "ARMORED TITAN (Class 2)",
 			Timestamp:  time.Now(),
 		}

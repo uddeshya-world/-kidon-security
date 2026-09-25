@@ -31,7 +31,7 @@ runtime:
       - "nc"
       - "wget"
 
-  # Network Fortress (v0.2.0) - Titan Firewall
+  # Network Fortress (v0.2.0) - network firewall for the agent under guard
   network_guard:
     enabled: true
     mode: "allowlist"  # allowlist | blocklist | monitor
@@ -71,6 +71,7 @@ offensive:
 
 # =============================================================================
 # TITAN CLASSIFICATION
+# A Titan is an autonomous agent. These classes describe that agent.
 # =============================================================================
 titan_class: 2  # 1=Cart, 2=Armored, 3=Colossal
 

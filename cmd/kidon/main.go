@@ -10,11 +10,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"github.com/uddeshya-23/kidon-security/internal/offensive"
-	"github.com/uddeshya-23/kidon-security/internal/report"
-	kruntime "github.com/uddeshya-23/kidon-security/internal/runtime"
-	"github.com/uddeshya-23/kidon-security/internal/static"
-	"github.com/uddeshya-23/kidon-security/internal/ui"
+	"github.com/uddeshya-world/kidon-security/internal/offensive"
+	"github.com/uddeshya-world/kidon-security/internal/report"
+	kruntime "github.com/uddeshya-world/kidon-security/internal/runtime"
+	"github.com/uddeshya-world/kidon-security/internal/static"
+	"github.com/uddeshya-world/kidon-security/internal/ui"
 )
 
 var (
@@ -36,9 +36,7 @@ var rootCmd = &cobra.Command{
 	Short: "Kidon - Agentic Cyber Defense Platform",
 	Long: banner + `
 Kidon is a security platform designed for AI agents.
-It provides static analysis, runtime protection, and red teaming capabilities.
-
-OWASP Top 10 for Agentic AI (2025) Compliant.`,
+It provides static analysis, runtime protection, and red teaming capabilities.`,
 	Version: version,
 }
 
@@ -50,7 +48,6 @@ var scanCmd = &cobra.Command{
 	
 Scans for:
   - Hardcoded credentials (API keys, AWS keys)
-  - Dangerous tool configurations
   - Vulnerable dependencies (OSV.dev)`,
 	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -136,14 +133,12 @@ var guardCmd = &cobra.Command{
 	Short: "Activate runtime eBPF protection",
 	Long: `The Watchman - Kernel-level eBPF monitoring of agent processes.
 
-v0.1.0: Process Guard - Blocks unauthorized process execution (bash, sh).
-v0.2.0: Network Guard - Blocks unauthorized network connections (Iron Dome).
-
-Target Risks: ASI-02 (Tool Misuse), ASI-05 (Code Exec), ASI-10 (Rogue Agents).
+v0.1.0: Process Guard - Blocks unauthorized process execution (bash).
+v0.2.0: Network Guard (experimental) - resolves allowed domains and logs; connection blocking is not implemented yet.
 
 Examples:
   kidon guard                       # Process guard only
-  kidon guard --network             # Full protection (process + network)
+  kidon guard --network             # Process guard plus experimental network logging
   kidon guard --network --cgroup /sys/fs/cgroup
 
 NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
@@ -156,9 +151,9 @@ NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
 			fmt.Println("  docker run --privileged --pid=host --cgroupns=host kidon-security guard --network")
 			os.Exit(1)
 		}
-		
+
 		if guardNetwork {
-			color.Cyan("🔥 Starting Iron Dome (Full Protection)...")
+			color.Cyan("Starting process guard + experimental network logging...")
 			kruntime.StartFullGuard(guardCgroup)
 		} else {
 			kruntime.StartGuard()
@@ -167,7 +162,7 @@ NOTE: Requires Linux kernel with eBPF support. Run inside Docker container.`,
 }
 
 func init() {
-	guardCmd.Flags().BoolVar(&guardNetwork, "network", false, "Enable Network Guard (Iron Dome v0.2.0)")
+	guardCmd.Flags().BoolVar(&guardNetwork, "network", false, "Enable experimental network logging (no blocking)")
 	guardCmd.Flags().StringVar(&guardCgroup, "cgroup", "/sys/fs/cgroup", "Cgroup path for network filtering")
 }
 
@@ -187,8 +182,6 @@ var strikeCmd = &cobra.Command{
 
 Executes jailbreak attempts and security tests against a target AI agent.
 Can use static attack strategies or AI-generated attacks via Ollama.
-
-Target Risks: ASI-01 (Goal Hijack), ASI-06 (Memory Poisoning), ASI-08 (Cascading Failures).
 
 Examples:
   kidon strike -t http://localhost:8000/chat
@@ -288,15 +281,13 @@ generates mission_report.html with a cyber-military dark theme.`,
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Launch the Kidon Command Cockpit (TUI)",
-	Long: `The Cockpit - Unified Terminal Dashboard.
-
-Provides a real-time terminal interface combining:
-  - THE SENTRY: Static Analysis & Supply Chain Scanner
-  - THE SHOMER: Runtime Guard with eBPF event streaming
-  - THE KIDON: Red Team Attack Console
-
-Controls:
-  [Tab] Switch tabs | [1-3] Direct select | [s] Scan | [q] Quit`,
+	Long: "The Cockpit - Unified Terminal Dashboard.\n\n" +
+		"The dashboard tabs show demo output. `kidon scan` and `kidon guard` do the real work.\n" +
+		"  - THE SENTRY: demo output\n" +
+		"  - THE SHOMER: simulated demo events\n" +
+		"  - THE KIDON: demo output\n\n" +
+		"Controls:\n" +
+		"  [Tab] Switch tabs | [1-3] Direct select | [s] Scan | [q] Quit",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Create a channel for guard events
 		guardChan := make(chan string)
