@@ -53,12 +53,12 @@ A cyberpunk, keyboard-driven TUI that unifies all security operations.
 | Tab | Engine | Controls |
 |-----|--------|----------|
 | **THE SENTRY** | demo output (static) | `[s]` Scan |
-| **THE SHOMER** | Cilium eBPF | `[c]` Clear `[p]` Pause |
+| **THE SHOMER** | demo output (simulated events) | `[c]` Clear `[p]` Pause |
 | **THE KIDON** | demo output (static) | `[a]` Probe `[d]` DAN `[f]` Flood |
 
-The TUI's Sentry `[s]` and Kidon `[a]`/`[d]`/`[f]`/`[e]` actions currently display fixed demonstration output and do not scan or contact a target. `kidon scan` performs the real scan.
+The TUI's Sentry `[s]` and Kidon `[a]`/`[d]`/`[f]`/`[e]` actions currently display fixed demonstration output and do not scan or contact a target. The Shomer tab shows simulated demo events. `kidon scan` performs the real scan, and `kidon guard` runs the eBPF guard.
 
-![The Shomer - Live Guard](assets/dashboard_shomer.png)
+![The Shomer tab (demo output)](assets/dashboard_shomer.png)
 
 ![The Kidon - Red Team](assets/dashboard_kidon.png)
 

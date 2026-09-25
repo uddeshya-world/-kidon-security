@@ -7,7 +7,7 @@ Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Int
 
 **1. The Command Cockpit (TUI)**
 * **Unified Dashboard:** A cyberpunk, keyboard-driven interface (`./kidon dashboard`) powered by `Bubble Tea`.
-* **Live Monitoring:** Watch real-time logs from the Shomer (Guard) in one terminal. The Sentry tab shows fixed demonstration output and does not scan or contact a target. `kidon scan` performs the real scan.
+* The dashboard's Shomer tab shows simulated demo events; `kidon guard` runs the eBPF guard. The Sentry tab shows fixed demonstration output and does not scan or contact a target. `kidon scan` performs the real scan.
 * **Interactive Tabs:** Switch between Sentry, Shomer, and Kidon Strike modes instantly.
 
 **2. Supply Chain Intelligence ("The Gatekeeper")**

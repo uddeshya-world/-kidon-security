@@ -286,15 +286,13 @@ generates mission_report.html with a cyber-military dark theme.`,
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Launch the Kidon Command Cockpit (TUI)",
-	Long: `The Cockpit - Unified Terminal Dashboard.
-
-Provides a real-time terminal interface combining:
-  - THE SENTRY: Static Analysis & Supply Chain Scanner
-  - THE SHOMER: Runtime Guard with eBPF event streaming
-  - THE KIDON: Red Team Attack Console
-
-Controls:
-  [Tab] Switch tabs | [1-3] Direct select | [s] Scan | [q] Quit`,
+	Long: "The Cockpit - Unified Terminal Dashboard.\n\n" +
+		"The dashboard tabs show demo output. `kidon scan` and `kidon guard` do the real work.\n" +
+		"  - THE SENTRY: demo output\n" +
+		"  - THE SHOMER: simulated demo events\n" +
+		"  - THE KIDON: demo output\n\n" +
+		"Controls:\n" +
+		"  [Tab] Switch tabs | [1-3] Direct select | [s] Scan | [q] Quit",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Create a channel for guard events
 		guardChan := make(chan string)
