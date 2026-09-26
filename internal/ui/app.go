@@ -1,7 +1,10 @@
 package ui
 
 import (
+	"os"
 	"strings"
+
+	"github.com/uddeshya-world/kidon-security/internal/mesa"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -45,7 +48,7 @@ var (
 
 // --- Model ---
 type Model struct {
-	activeTab int // 0: Sentry, 1: Shomer, 2: Strike
+	activeTab int // 0: Sentry, 1: Shomer, 2: Strike, 3: MESA
 	ready     bool
 
 	// Sentry
@@ -58,6 +61,9 @@ type Model struct {
 	// Kidon
 	strikeTarget string
 	strikeResult string
+
+	// MESA (scanner findings for the committed topology in KIDON_MESA_TOPOLOGY)
+	mesaView string
 
 	// Channels (Real-time data)
 	guardChan <-chan string
@@ -92,15 +98,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "tab":
-			m.activeTab = (m.activeTab + 1) % 3
+			m.activeTab = (m.activeTab + 1) % 4
 		case "shift+tab":
-			m.activeTab = (m.activeTab + 2) % 3
+			m.activeTab = (m.activeTab + 3) % 4
 		case "1":
 			m.activeTab = 0
 		case "2":
 			m.activeTab = 1
 		case "3":
 			m.activeTab = 2
+		case "4":
+			m.activeTab = 3
+
+		// MESA ACTIONS
+		case "m":
+			if m.activeTab == 3 {
+				m.mesaView = runMesaScan()
+			}
 
 		// SENTRY ACTIONS
 		case "s":
@@ -185,7 +199,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // --- View ---
 func (m Model) View() string {
 	// 1. Header (Tabs)
-	tabs := []string{"1. THE SENTRY", "2. THE SHOMER", "3. THE KIDON"}
+	tabs := []string{"1. THE SENTRY", "2. THE SHOMER", "3. THE KIDON", "4. MESA"}
 	var renderedTabs []string
 
 	for i, t := range tabs {
@@ -211,6 +225,9 @@ func (m Model) View() string {
 	case 2:
 		content = m.kidonView()
 		footer = "\n" + styleTab.Render("[a] Probe | [d] DAN | [f] Flood | [e] Exfil | [r] Reset | [q] Quit")
+	case 3:
+		content = m.mesaTabView()
+		footer = "\n" + styleTab.Render("[m] Run mesa-ibi-scan | [Tab] Switch | [q] Quit")
 	}
 
 	return styleBorder.Render(
@@ -221,6 +238,32 @@ func (m Model) View() string {
 			footer,
 		),
 	)
+}
+
+func (m Model) mesaTabView() string {
+	base := styleTitle.Render("🧩 MESA (composition closure)") + "\n\n"
+	if m.mesaView == "" {
+		return base + "Press " + styleActiveTab.Render("[m]") + " to scan the committed topology in KIDON_MESA_TOPOLOGY.\n" +
+			styleTab.Render("Uses mesa-ibi-scan v0.4+ (lattice mode). Findings list INV01 and NEAR_MISS with witness and minimal cut.")
+	}
+	return base + m.mesaView
+}
+
+// runMesaScan calls the MESA scanner on the committed topology. Kidon only consumes MESA's report format.
+func runMesaScan() string {
+	topo := os.Getenv("KIDON_MESA_TOPOLOGY")
+	if topo == "" {
+		return styleWarning.Render("Set KIDON_MESA_TOPOLOGY to a committed topology (v0.2) and install mesa-ibi-scan.")
+	}
+	bin := os.Getenv("KIDON_MESA_SCAN")
+	if bin == "" {
+		bin = "mesa-ibi-scan"
+	}
+	r, err := mesa.RunScanner(bin, topo)
+	if err != nil {
+		return styleAlert.Render("scan failed: ") + err.Error()
+	}
+	return mesa.Summary(r)
 }
 
 func (m Model) sentryView() string {

@@ -3,14 +3,19 @@
 package runtime
 
 import (
+	"bytes"
+	"encoding/binary"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/uddeshya-world/kidon-security/internal/mesa"
 
 	"github.com/cilium/ebpf/link"
-	"github.com/cilium/ebpf/rlimit"
 	"github.com/cilium/ebpf/ringbuf"
+	"github.com/cilium/ebpf/rlimit"
 )
 
 // GuardMode specifies which protection to enable
@@ -18,7 +23,7 @@ type GuardMode int
 
 const (
 	GuardModeProcess GuardMode = 1 << iota // Process execution monitoring
-	GuardModeNetwork                        // Network egress filtering
+	GuardModeNetwork                       // Network egress filtering
 	GuardModeAll     = GuardModeProcess | GuardModeNetwork
 )
 
@@ -31,12 +36,12 @@ func StartGuard() {
 func StartNetworkGuard(cgroupPath string) {
 	ng := NewNetworkGuard()
 	ng.LoadDefaultPolicy()
-	
+
 	if err := ng.Start(cgroupPath); err != nil {
 		log.Fatalf("Failed to start network guard: %v", err)
 	}
 	defer ng.Close()
-	
+
 	ng.MonitorEvents()
 }
 
@@ -45,7 +50,7 @@ func StartFullGuard(cgroupPath string) {
 	// Start network guard in background
 	ng := NewNetworkGuard()
 	ng.LoadDefaultPolicy()
-	
+
 	if err := ng.Start(cgroupPath); err != nil {
 		log.Printf("⚠️  Network guard failed to start: %v", err)
 		log.Println("Continuing with process guard only...")
@@ -53,7 +58,7 @@ func StartFullGuard(cgroupPath string) {
 		defer ng.Close()
 		go ng.MonitorEvents()
 	}
-	
+
 	// Start process guard
 	StartGuardWithMode(GuardModeProcess)
 }
@@ -89,6 +94,18 @@ func StartGuardWithMode(mode GuardMode) {
 	log.Println("🛡️  KIDON GUARD ACTIVE (Runtime Protection Enabled)")
 	log.Println("Waiting for events... (Try running 'bash' to test)")
 
+	// Optional MESA emitter: observed-edge events for mesa-d, shipped off-host by the sink's shipper.
+	var emitter *mesa.Emitter
+	if sink := os.Getenv("KIDON_MESA_EVENT_SINK"); sink != "" {
+		if e, err := mesa.NewFileEmitter(sink); err != nil {
+			log.Printf("MESA event sink unavailable: %v", err)
+		} else {
+			emitter = e
+			defer e.Close()
+		}
+	}
+	workload := os.Getenv("KIDON_WORKLOAD_PRINCIPAL")
+
 	// 5. Loop forever reading events
 	go func() {
 		for {
@@ -101,9 +118,20 @@ func StartGuardWithMode(mode GuardMode) {
 				continue
 			}
 
-			// Parse the binary data back into a struct
-			_ = record
-			log.Printf("🚨 ALERT: BLOCKED SUSPICIOUS PROCESS EXECUTION!")
+			// struct event { u32 pid; u8 comm[16]; u8 blocked; } __attribute__((packed))
+			raw := record.RawSample
+			if len(raw) >= 21 {
+				pid := binary.LittleEndian.Uint32(raw[0:4])
+				comm := string(bytes.TrimRight(raw[4:20], "\x00"))
+				if raw[20] == 1 {
+					log.Printf("🚨 ALERT: BLOCKED SUSPICIOUS PROCESS EXECUTION! pid=%d comm=%s", pid, comm)
+				}
+				if emitter != nil && workload != "" {
+					if err := emitter.Emit(mesa.ExecEvent("kidon-shomer", workload, pid, comm, time.Now())); err != nil {
+						log.Printf("MESA emit failed: %v", err)
+					}
+				}
+			}
 		}
 	}()
 
