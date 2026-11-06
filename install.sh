@@ -29,7 +29,7 @@ if API=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest"); then
     LATEST=$(printf '%s\n' "$API" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
 fi
 if [ -z "$LATEST" ]; then
-    echo "No release binaries are published yet. Build from source: go build -o kidon ./cmd/kidon"
+    echo "No release binaries are published yet. Build from source using the README: on Linux, go generate ./internal/runtime/... then go build -o kidon ./cmd/kidon"
     exit 1
 fi
 
