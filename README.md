@@ -39,12 +39,35 @@ curl -sfL https://raw.githubusercontent.com/uddeshya-world/-kidon-security/main/
 
 ### Option 3: Build from Source
 
+On Linux, `internal/runtime/monitor.go` calls `bpfObjects` and `loadBpfObjects`. Those identifiers are emitted by bpf2go and are absent until you generate them, so `go build` fails if you skip that step. `gen.go` is tagged `linux`, and `go generate` runs:
+
+```text
+go run github.com/cilium/ebpf/cmd/bpf2go -target amd64 -type event bpf ../../bpf/process_monitor.c -- -I../../bpf/headers
+```
+
+bpf2go comes from `github.com/cilium/ebpf` (already required by `go.mod`); `go run` builds it. The directive targets amd64 and writes `internal/runtime/bpf_x86_bpfel.go` plus the embedded object, compiled for `386` and `amd64`. A Linux arm64 build still misses those symbols after this command.
+
+Generate needs:
+
+- Go 1.24 or newer (see `go.mod`)
+- `clang`, the compiler bpf2go invokes
+- `llvm`, which provides `llvm-strip`
+- `libbpf-dev`, which provides `<bpf/bpf_helpers.h>` and `<bpf/bpf_tracing.h>`
+- `gcc-multilib`, which provides the `/usr/include/asm` symlink clang needs to resolve `<asm/types.h>` while compiling `<linux/bpf.h>`
+
+On Debian or Ubuntu, from a fresh clone:
+
 ```bash
 git clone https://github.com/uddeshya-world/-kidon-security
 cd -kidon-security
+sudo apt-get update
+sudo apt-get install -y clang llvm libbpf-dev gcc-multilib
+go generate ./internal/runtime/...
 go build -o kidon cmd/kidon/main.go
 ./kidon dashboard
 ```
+
+On other operating systems the Linux file is excluded and `go build -o kidon cmd/kidon/main.go` uses `internal/runtime/monitor_stub.go`.
 
 ---
 

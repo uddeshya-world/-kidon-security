@@ -30,9 +30,13 @@ Kidon v0.3.0 introduces the **Command Cockpit (TUI)** and the **Supply Chain Int
 ```
 
 ### 📦 Installation
+
+On Linux, generate the bpf2go output before building. See the README for the compiler packages (`clang`, `llvm`, `libbpf-dev`, `gcc-multilib`) and Go 1.24.
+
 ```bash
 git clone https://github.com/uddeshya-world/-kidon-security
 cd -kidon-security
+go generate ./internal/runtime/...
 go build -o kidon cmd/kidon/main.go
 ```
 

@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install -y clang llvm libbpf-dev linux-headers-generic gcc-multilib
 
       - name: Generate eBPF Artifacts
-        run: go generate ./internal/runtime/... || echo "eBPF generation skipped (requires Linux kernel headers)"
+        run: go generate ./internal/runtime/...
 
       - name: Build Binary
         run: go build -v -o kidon cmd/kidon/main.go
